@@ -7,12 +7,14 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
@@ -49,6 +51,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         configureBindings();
+        configureAutoCommands();
     }
 
     private void configureBindings() {
@@ -117,6 +120,25 @@ public class RobotContainer {
         //Close Intake
         m_operatorStick.leftBumper().onTrue(new InstantCommand(
             () -> m_intakeSubsystem.moveToPosition(Constants.Intake.intakeClose)));
+    }
+
+    private void configureAutoCommands(){
+    //build auto path commands
+    NamedCommands.registerCommand("ElevatorCoralLow", new RunCommand(
+        () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralLow)));
+
+    NamedCommands.registerCommand("WristCollectLM", new RunCommand(
+        () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralLM)));
+
+    NamedCommands.registerCommand("IntakeOpen", new RunCommand(
+        () -> m_intakeSubsystem.moveToPosition(Constants.Intake.intakeOpen)));
+
+    NamedCommands.registerCommand("ElevatorCoralHigh", new RunCommand(
+        () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralHigh)));
+
+    NamedCommands.registerCommand("WristCoralH", new RunCommand(
+        () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralH)));
+    
     }
 
     public Command getAutonomousCommand() {
