@@ -8,9 +8,12 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -48,6 +51,9 @@ public class RobotContainer {
     public static final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+    // Configure Autonomous chooser 
+    SendableChooser<Command> m_chooser = new SendableChooser<>();
 
     public RobotContainer() {
         configureBindings();
@@ -98,8 +104,8 @@ public class RobotContainer {
             () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralMedium)));
 
         //move elevator to coral high
-        m_operatorStick.y().onTrue(new InstantCommand(
-            () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralHigh)));
+       // m_operatorStick.y().onTrue(new InstantCommand(
+           // () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralHigh)));
 
         //move Wrist collect position
         m_operatorStick.povDown().onTrue(new InstantCommand(
@@ -110,8 +116,8 @@ public class RobotContainer {
             () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralLM)));
 
         //move Wrist coral high position
-        m_operatorStick.povUp().onTrue(new InstantCommand(
-            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralH)));
+       // m_operatorStick.povUp().onTrue(new InstantCommand(
+           // () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralH)));
 
         //Open Intake
         m_operatorStick.rightBumper().onTrue(new InstantCommand(
@@ -127,8 +133,11 @@ public class RobotContainer {
     NamedCommands.registerCommand("ElevatorCoralLow", new RunCommand(
         () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralLow)));
 
-    NamedCommands.registerCommand("WristCollectLM", new RunCommand(
+    NamedCommands.registerCommand("WristCoralLM", new RunCommand(
         () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralLM)));
+
+    NamedCommands.registerCommand("WristCollectL1", new RunCommand(
+        () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCollect)));
 
     NamedCommands.registerCommand("IntakeOpen", new RunCommand(
         () -> m_intakeSubsystem.moveToPosition(Constants.Intake.intakeOpen)));
@@ -138,10 +147,38 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("WristCoralH", new RunCommand(
         () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralH)));
+
+        /************ Alliance Barge Path ************
+     *
+     * starts on line on alliance side and scores coral on level 2 side
+     *
+     */
+    Command allianceBargeAuto = new PathPlannerAuto("AllianceBargeAuto");
+    m_chooser.addOption("Alliance Barge Side Auto", allianceBargeAuto);
+
+    /************ Center Path ************
+     *
+     * starts on line on alliance side and scores coral on level 1 center
+     *
+     */
+    Command centerAuto = new PathPlannerAuto("CenterAuto");
+    m_chooser.setDefaultOption("Center Auto", centerAuto);
+
+     /************ Opposing Alliance Path ************
+     *
+     * starts on line on Opposing alliance side and scores coral on level 2 side
+     *
+     */
+    Command opposingAllianceAuto = new PathPlannerAuto("OpposingAllianceAuto");
+    m_chooser.addOption("Opposing Alliance Barge Side Auto", opposingAllianceAuto);
+
+
+    SmartDashboard.putData("Auto choices:", m_chooser);
     
     }
 
     public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+        return m_chooser.getSelected();
+        //return Commands.print("No autonomous command configured");
     }
 }

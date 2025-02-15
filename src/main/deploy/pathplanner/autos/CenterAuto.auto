@@ -11,28 +11,15 @@
           }
         },
         {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "ElevatorCoralHigh"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "WristCoralH"
-                }
-              }
-            ]
-          }
-        },
-        {
           "type": "sequential",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "WristCollectL1"
+                }
+              },
               {
                 "type": "named",
                 "data": {
