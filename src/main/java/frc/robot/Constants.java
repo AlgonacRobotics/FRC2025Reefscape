@@ -39,6 +39,6 @@ public final class Constants {
     public static final int intakeCancoder_ID = 14;
 
     public static final double intakeOpen = 0;  // R bumper
-    public static final double intakeClose = 2;  //L bumper
+    public static final double intakeClose = 0.25;  //L bumper
   }
 }
