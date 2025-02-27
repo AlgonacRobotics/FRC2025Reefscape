@@ -38,8 +38,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     /* Configure Motion Magic */
     MotionMagicConfigs mmc = configEle1.MotionMagic;
-    mmc.withMotionMagicCruiseVelocity(RotationsPerSecond.of(5)) // 5 (mechanism) rotations per second cruise
-      .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(10)) // Take approximately 0.5 seconds to reach max vel
+    mmc.withMotionMagicCruiseVelocity(RotationsPerSecond.of(50)) // 5 (mechanism) rotations per second cruise (max 100)
+      .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(25)) // Take approximately 0.5 seconds to reach max vel (max 100)
       // Take approximately 0.1 seconds to reach max accel 
       .withMotionMagicJerk(1600);
 

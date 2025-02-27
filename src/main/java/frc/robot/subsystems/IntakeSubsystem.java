@@ -44,8 +44,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     /* Configure Motion Magic */
     MotionMagicConfigs mmcIntake = intakeConfig.MotionMagic;
-    mmcIntake.withMotionMagicCruiseVelocity(RotationsPerSecond.of(5)) // 5 (mechanism) rotations per second cruise
-      .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(10)) // Take approximately 0.5 seconds to reach max vel
+    mmcIntake.withMotionMagicCruiseVelocity(RotationsPerSecond.of(60)) // 5 (mechanism) rotations per second cruise (max 120 for minion)
+      .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(60)) // Take approximately 0.5 seconds to reach max vel (max 120 for minion)
       // Take approximately 0.1 seconds to reach max accel 
       .withMotionMagicJerk(1600);
 
@@ -53,7 +53,7 @@ public class IntakeSubsystem extends SubsystemBase {
     slot0.kS = 0; // Add 0.25 V output to overcome static friction
     slot0.kV = 0; // A velocity target of 1 rps results in 0.12 V output
     slot0.kA = 0; // An acceleration of 1 rps/s requires 0.01 V output
-    slot0.kP = 5; // A position error of 0.2 rotations results in 12 V output
+    slot0.kP = 1; // A position error of 0.2 rotations results in 12 V output
     slot0.kI = 0; // No output for integrated error
     slot0.kD = 0; // A velocity error of 1 rps results in 0.5 V output
 

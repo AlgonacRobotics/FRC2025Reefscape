@@ -32,7 +32,7 @@ public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
-    SlewRateLimiter filter = new SlewRateLimiter(.05);
+    SlewRateLimiter filter = new SlewRateLimiter(0.5);
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -94,29 +94,50 @@ public class RobotContainer {
 
         //configure operatorStick button bindings
 
-        //move elevator to home position
-        m_operatorStick.a().onTrue(new InstantCommand(
-            () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorHomePosition)));
+        //SCORE L3 move wrist to coral LM then move elevator to coral medium
+        m_operatorStick.b().onTrue(Commands.sequence(
+            new InstantCommand(
+            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralLM))//,
+            //new InstantCommand(
+            //() -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralMedium))
+            ));
 
-        //move elevator to coral low
-        m_operatorStick.b().onTrue(new InstantCommand(
-            () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralLow)));
+        //SCORE L1 move wrist to coral LM then move elevator to home position
+        m_operatorStick.a().onTrue(Commands.sequence(
+            new InstantCommand(
+            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralLM))//,
+            //new InstantCommand(
+            //() -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorHomePosition))
+            ));
 
-        //move elevator to coral medium
-        m_operatorStick.x().onTrue(new InstantCommand(
-            () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralMedium)));
+        //SCORE L2 move wrist to coral LM then move elevator to coral low
+        m_operatorStick.x().onTrue(Commands.sequence(
+            new InstantCommand(
+            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralLM))//,
+            //new InstantCommand(
+            //() -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralLow))
+            ));
 
-        //move elevator to coral high
-       // m_operatorStick.y().onTrue(new InstantCommand(
-           // () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralHigh)));
+        //SCORE L4 move wrist to coral H then move elevator to coral high
+        /*m_operatorStick.y().onTrue(Commands.sequence(
+            new InstantCommand(
+            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralH))//,
+            //new InstantCommand(
+            //() -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralHigh))
+             ));*/
 
-        //move Wrist collect position
-        m_operatorStick.povDown().onTrue(new InstantCommand(
-            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCollect)));
+        //COLLECTION POSITION move elevator home then move Wrist collect position 
+        m_operatorStick.povDown().onTrue(Commands.sequence(
+            new InstantCommand(
+            () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorHomePosition))//,
+            //new InstantCommand(
+            //() -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCollect))
+            ));
+
 
             //move Wrist coral Low Medium position
-        m_operatorStick.povRight().onTrue(new InstantCommand(
-            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralLM)));
+        //m_operatorStick.povRight().onTrue(new InstantCommand(
+            //() -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralLM)));
 
         //move Wrist coral high position
        // m_operatorStick.povUp().onTrue(new InstantCommand(
@@ -128,7 +149,7 @@ public class RobotContainer {
 
         //Close Intake
         m_operatorStick.leftBumper().onTrue(new InstantCommand(
-            () -> m_intakeSubsystem.moveToPosition(Constants.Intake.intakeClose)));
+            () -> m_intakeSubsystem.moveToPosition(Constants.Intake.intakeClose)));    
     }
 
     private void configureAutoCommands(){
