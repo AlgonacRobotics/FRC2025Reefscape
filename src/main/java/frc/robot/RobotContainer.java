@@ -42,6 +42,9 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+    private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
@@ -55,18 +58,20 @@ public class RobotContainer {
 
     public static final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final CommandSwerveDrivetrain drivetrain;
 
     // Configure Autonomous chooser 
-     SendableChooser<Command> autoChooser = new SendableChooser<>();
-     //private final SendableChooser<Command> autoChooser;
+     //SendableChooser<Command> autoChooser = new SendableChooser<>();
+    private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-       // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
-        //autoChooser = AutoBuilder.buildAutoChooser("Auto");
-        //SmartDashboard.putData("Auto Mode", autoChooser);
+        drivetrain = TunerConstants.createDrivetrain();
         configureBindings();
-       // configureAutoCommands();
+        //autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+        autoChooser = AutoBuilder.buildAutoChooser("Auto");
+        SmartDashboard.putData("Auto Mode", autoChooser);
+        //AutoCommand = AutoBuilder.buildAuto("Auto");
+        //configureAutoCommands();
        
     }
 
@@ -86,6 +91,14 @@ public class RobotContainer {
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
+
+        joystick.pov(0).whileTrue(drivetrain.applyRequest(() ->
+        forwardStraight.withVelocityX(0.5).withVelocityY(0))
+    );
+    joystick.pov(180).whileTrue(drivetrain.applyRequest(() ->
+        forwardStraight.withVelocityX(-0.5).withVelocityY(0))
+    );
+
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -223,16 +236,17 @@ public class RobotContainer {
  //SmartDashboard.putData("Opposing Alliance Barge Side Auto", new PathPlannerAuto("OpposingAllianceAuto"));
   //autoChooser = AutoBuilder.buildAutoChooser();
 
- // autoChooser = AutoBuilder.buildAutoChooser("OpposingAllianceAuto");
+  //autoChooser = AutoBuilder.buildAutoChooser("OpposingAllianceAuto");
     //m_chooser.addOption("Opposing Alliance Barge Side Auto", opposingAllianceAuto);
 
 
     //SmartDashboard.putData("Auto choices:", m_chooser);
     
     }
-
+    //Command AutoCommand; 
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
+        //return AutoCommand;
         //return Commands.print("No autonomous command configured");
     }
 }
