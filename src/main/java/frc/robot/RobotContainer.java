@@ -7,6 +7,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
@@ -56,11 +58,16 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     // Configure Autonomous chooser 
-    SendableChooser<Command> m_chooser = new SendableChooser<>();
+     SendableChooser<Command> autoChooser = new SendableChooser<>();
+     //private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
+       // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+        //autoChooser = AutoBuilder.buildAutoChooser("Auto");
+        //SmartDashboard.putData("Auto Mode", autoChooser);
         configureBindings();
-        configureAutoCommands();
+       // configureAutoCommands();
+       
     }
 
     private void configureBindings() {
@@ -69,7 +76,7 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward), slew code filter.calculate(-joystick.getLeftY())
+                drive.withVelocityX(filter.calculate(-joystick.getLeftY()) * MaxSpeed) // Drive forward with negative Y (forward), slew code filter.calculate(-joystick.getLeftY())
                     .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
@@ -97,25 +104,37 @@ public class RobotContainer {
         //SCORE L3 move wrist to coral LM then move elevator to coral medium
         m_operatorStick.b().onTrue(Commands.sequence(
             new InstantCommand(
-            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralLM))//,
-            //new InstantCommand(
-            //() -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralMedium))
+            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristTravel)),
+            new WaitCommand(1),
+            new InstantCommand(
+            () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralL3)),
+            new WaitCommand(2),
+            new InstantCommand(
+            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralL3))
             ));
 
         //SCORE L1 move wrist to coral LM then move elevator to home position
         m_operatorStick.a().onTrue(Commands.sequence(
             new InstantCommand(
-            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralLM))//,
-            //new InstantCommand(
-            //() -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorHomePosition))
+            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristTravel)),
+            new WaitCommand(1),
+            new InstantCommand(
+            () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralL2)),
+            new WaitCommand(2),
+            new InstantCommand(
+            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralL2))
             ));
 
         //SCORE L2 move wrist to coral LM then move elevator to coral low
         m_operatorStick.x().onTrue(Commands.sequence(
             new InstantCommand(
-            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralLM))//,
-            //new InstantCommand(
-            //() -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralLow))
+            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristTravel)),
+            new WaitCommand(1),
+            new InstantCommand(
+            () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralL2)),
+            new WaitCommand(2),
+            new InstantCommand(
+            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralL2))
             ));
 
         //SCORE L4 move wrist to coral H then move elevator to coral high
@@ -129,9 +148,15 @@ public class RobotContainer {
         //COLLECTION POSITION move elevator home then move Wrist collect position 
         m_operatorStick.povDown().onTrue(Commands.sequence(
             new InstantCommand(
-            () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorHomePosition))//,
-            //new InstantCommand(
-            //() -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCollect))
+            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristTravel)),
+            new WaitCommand(1),
+            new InstantCommand(
+            () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorHomePosition)),
+            new WaitCommand(2),
+            new InstantCommand(
+            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCollect)),
+            new InstantCommand(
+            () -> m_intakeSubsystem.moveToPosition(Constants.Intake.intakeClose))
             ));
 
 
@@ -155,10 +180,10 @@ public class RobotContainer {
     private void configureAutoCommands(){
     //build auto path commands
     NamedCommands.registerCommand("ElevatorCoralLow", new RunCommand(
-        () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralLow)));
+        () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralL2)));
 
     NamedCommands.registerCommand("WristCoralLM", new RunCommand(
-        () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralLM)));
+        () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralL2)));
 
     NamedCommands.registerCommand("WristCollectL1", new RunCommand(
         () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCollect)));
@@ -170,39 +195,44 @@ public class RobotContainer {
         () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralHigh)));
 
     NamedCommands.registerCommand("WristCoralH", new RunCommand(
-        () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralH)));
+        () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralL3)));
 
         /************ Alliance Barge Path ************
      *
      * starts on line on alliance side and scores coral on level 2 side
      *
      */
-    Command allianceBargeAuto = new PathPlannerAuto("AllianceBargeAuto");
-    m_chooser.addOption("Alliance Barge Side Auto", allianceBargeAuto);
+    //Command allianceBargeAuto = new PathPlannerAuto("AllianceBargeAuto");
+    //m_chooser.addOption("Alliance Barge Side Auto", allianceBargeAuto);
 
     /************ Center Path ************
      *
      * starts on line on alliance side and scores coral on level 1 center
      *
      */
-    Command centerAuto = new PathPlannerAuto("CenterAuto");
-    m_chooser.setDefaultOption("Center Auto", centerAuto);
+    //Command centerAuto = new PathPlannerAuto("CenterAuto");
+    //m_chooser.setDefaultOption("Center Auto", centerAuto);
 
      /************ Opposing Alliance Path ************
      *
      * starts on line on Opposing alliance side and scores coral on level 2 side
      *
      */
-    Command opposingAllianceAuto = new PathPlannerAuto("OpposingAllianceAuto");
-    m_chooser.addOption("Opposing Alliance Barge Side Auto", opposingAllianceAuto);
+  //  PathPlannerAuto opposingAllianceAuto = new PathPlannerAuto("OpposingAllianceAuto");
+  
+ //SmartDashboard.putData("Opposing Alliance Barge Side Auto", new PathPlannerAuto("OpposingAllianceAuto"));
+  //autoChooser = AutoBuilder.buildAutoChooser();
+
+ // autoChooser = AutoBuilder.buildAutoChooser("OpposingAllianceAuto");
+    //m_chooser.addOption("Opposing Alliance Barge Side Auto", opposingAllianceAuto);
 
 
-    SmartDashboard.putData("Auto choices:", m_chooser);
+    //SmartDashboard.putData("Auto choices:", m_chooser);
     
     }
 
     public Command getAutonomousCommand() {
-        return m_chooser.getSelected();
+        return autoChooser.getSelected();
         //return Commands.print("No autonomous command configured");
     }
 }

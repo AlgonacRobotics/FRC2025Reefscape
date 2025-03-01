@@ -21,7 +21,7 @@ import frc.robot.Constants;
 
 public class WristSubsystem extends SubsystemBase {
   /** Creates a new WristSubsystem. */
-  TalonFX wristDrive = new TalonFX(Constants.Wrist.wristDrive_ID, "Canivore1");
+  TalonFX wristDrive = new TalonFX(Constants.Wrist.wristDrive_ID, "rio");
 
   //CANcoder wristCancoder = new CANcoder(Constants.Wrist.wristCancoder_ID);
 
@@ -48,9 +48,9 @@ public class WristSubsystem extends SubsystemBase {
     slot0.kS = 0; // Add 0.25 V output to overcome static friction
     slot0.kV = 0; // A velocity target of 1 rps results in 0.12 V output
     slot0.kA = 0; // An acceleration of 1 rps/s requires 0.01 V output
-    slot0.kP = 1; // A position error of 0.2 rotations results in 12 V output
+    slot0.kP = 8; // A position error of 0.2 rotations results in 12 V output
     slot0.kI = 0; // No output for integrated error
-    slot0.kD = 0; // A velocity error of 1 rps results in 0.5 V output
+    slot0.kD = 0.1; // A velocity error of 1 rps results in 0.5 V output
 
     StatusCode status = StatusCode.StatusCodeNotInitialized;
     for (int i = 0; i < 5; ++i) {
