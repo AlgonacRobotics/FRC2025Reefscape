@@ -34,7 +34,9 @@ public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
-    SlewRateLimiter filter = new SlewRateLimiter(0.5);
+    SlewRateLimiter filter = new SlewRateLimiter(0.75);
+
+    SlewRateLimiter filter2 = new SlewRateLimiter(0.5);
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -68,6 +70,20 @@ public class RobotContainer {
         drivetrain = TunerConstants.createDrivetrain();
         configureBindings();
         //autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+
+        NamedCommands.registerCommand("elevatorCoralL2", new RunCommand(
+        () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralL2)));//good
+
+    NamedCommands.registerCommand("wristCoralL2", new RunCommand(
+        () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralL2)));//good
+
+    NamedCommands.registerCommand("wristTravel", new RunCommand(
+        () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristTravel)));//good
+
+    NamedCommands.registerCommand("intakeOpen", new RunCommand(
+        () -> m_intakeSubsystem.moveToPosition(Constants.Intake.intakeOpen)));//good
+
+
         autoChooser = AutoBuilder.buildAutoChooser("Auto");
         SmartDashboard.putData("Auto Mode", autoChooser);
         //AutoCommand = AutoBuilder.buildAuto("Auto");
@@ -88,9 +104,9 @@ public class RobotContainer {
         );
 
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        ));
+        //joystick.b().whileTrue(drivetrain.applyRequest(() ->
+          //  point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        //));
 
         joystick.pov(0).whileTrue(drivetrain.applyRequest(() ->
         forwardStraight.withVelocityX(0.5).withVelocityY(0))
@@ -111,6 +127,15 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
+
+        // Make drive slow button
+        //.x().onTrue(new InstantCommand(
+          //  () -> drivetrain.enableSlowSpeed()));
+
+        // Make drive normal button
+        //joystick.b().onTrue(new InstantCommand(
+          //  () -> drivetrain.enableNormalSpeed()));
+
 
         //configure operatorStick button bindings
 

@@ -39,6 +39,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
 
+    public double speedOffset = 1;
+
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
@@ -194,6 +196,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
         configureAutoBuilder();
     }
+
+    public void enableSlowSpeed(){
+        speedOffset = 5;
+    }
+
+    public void enableNormalSpeed(){
+        speedOffset = 1;
+    }
+
 
     private void configureAutoBuilder() {
         try {
