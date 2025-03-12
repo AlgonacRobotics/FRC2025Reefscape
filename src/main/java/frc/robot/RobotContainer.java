@@ -71,16 +71,16 @@ public class RobotContainer {
         configureBindings();
         //autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
 
-        NamedCommands.registerCommand("elevatorCoralL2", new RunCommand(
+        NamedCommands.registerCommand("elevatorCoralL2", new InstantCommand(
         () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralL2)));//good
 
-    NamedCommands.registerCommand("wristCoralL2", new RunCommand(
+    NamedCommands.registerCommand("wristCoralL2", new InstantCommand(
         () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralL2)));//good
 
-    NamedCommands.registerCommand("wristTravel", new RunCommand(
+    NamedCommands.registerCommand("wristTravel", new InstantCommand(
         () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristTravel)));//good
 
-    NamedCommands.registerCommand("intakeOpen", new RunCommand(
+    NamedCommands.registerCommand("intakeOpen", new InstantCommand(
         () -> m_intakeSubsystem.moveToPosition(Constants.Intake.intakeOpen)));//good
 
 
