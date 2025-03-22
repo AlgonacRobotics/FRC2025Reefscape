@@ -39,8 +39,8 @@ public class WristSubsystem extends SubsystemBase {
 
     /* Configure Motion Magic */
     MotionMagicConfigs mmcWrist = wristConfig.MotionMagic;
-    mmcWrist.withMotionMagicCruiseVelocity(RotationsPerSecond.of(50)) // 5 (mechanism) rotations per second cruise (max 100)
-      .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(50)) // Take approximately 0.5 seconds to reach max vel (max 100)
+    mmcWrist.withMotionMagicCruiseVelocity(RotationsPerSecond.of(100)) // 5 (mechanism) rotations per second cruise (max 100)
+      .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(100)) // Take approximately 0.5 seconds to reach max vel (max 100)
       // Take approximately 0.1 seconds to reach max accel 
       .withMotionMagicJerk(1600);
 

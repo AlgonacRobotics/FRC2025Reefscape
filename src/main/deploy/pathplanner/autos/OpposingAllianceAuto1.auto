@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "intakeClose"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "OpposingAlliancePath1"

@@ -4,6 +4,8 @@
 
 package frc.robot.Commands;
 
+import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.LimelightHelpers;
@@ -19,6 +21,8 @@ public class AutoAlignToReef extends Command {
   private final PIDController rotatePID = new PIDController(0.1, 0, 0);
   private final PIDController turnPID = new PIDController(0.1, 0, 0);
   private final PIDController forwardPID = new PIDController(0.1, 0, 0);
+
+  private final SwerveRequest.FieldCentric swerveRequest = new SwerveRequest.FieldCentric();
   
   /** Creates a new AutoAlignToReef. */
   public AutoAlignToReef(CommandSwerveDrivetrain swerve) {
@@ -47,9 +51,30 @@ public class AutoAlignToReef extends Command {
   @Override
   public void execute() {
     // Validate valid target and potentally reef id tags 
+
     double tx = LimelightHelpers.getTX("limelight");
     double ty = LimelightHelpers.getTY("limelight");
 
+    var rotTX = rotatePID.calculate(tx,0);
+    var xSpeedTY = rotatePID.calculate(ty,0);
+
+    drive.applyRequest(() ->
+              swerveRequest.withVelocityX(-xSpeedTY) // Drive forward with negative Y (forward), slew code filter.calculate(-joystick.getLeftY())
+              .withVelocityY(0) // Drive left with negative X (left)
+              .withRotationalRate(-rotTX) // Drive counterclockwise with negative X (left)
+    
+        );
+
+    //we can test this if the other approach doesn't work
+    /* 
+    //We apply the speeds to the swerve drive 
+    swerveRequest.withVelocityX(xSpeedTY)
+    .withVelocityY(0)
+    .withRotationalRate(rotTX);
+
+    //use setControl() instead of of applyRequest()
+    drive.setControl(swerveRequest);
+    */
   }
 
   // Called once the command ends or is interrupted.

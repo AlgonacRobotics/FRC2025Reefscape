@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "intakeClose"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "AllianceBargePath1"
@@ -44,6 +50,18 @@
           "type": "named",
           "data": {
             "name": "intakeOpen"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "wristTravel"
           }
         }
       ]

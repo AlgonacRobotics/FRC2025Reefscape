@@ -15,7 +15,7 @@ package frc.robot;
 public final class Constants {
   public static class Elevator {
     public static final double elevatorHomePosition = 0; // A
-    public static final double elevatorCoralL2 = -23.903809; // B
+    public static final double elevatorCoralL2 = -17.423828; // B
     public static final double elevatorCoralL3 = -30.526367;// X
     public static final double elevatorCoralHigh = -27;// Y
 
@@ -29,7 +29,7 @@ public final class Constants {
     public static final int wristCancoder_ID = 13;
 
     public static final double wristCollect = 0;  //Dpad down
-    public static final double wristCoralL2 = -4.343262;  //Dpad Right
+    public static final double wristCoralL2 = -4.506836;  //Dpad Right
     public static final double wristCoralL3 = -1.572754;  // Dpad Up
     public static final double wristTravel = -5; 
   }

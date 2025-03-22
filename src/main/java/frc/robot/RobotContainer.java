@@ -34,9 +34,9 @@ public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
-    SlewRateLimiter filter = new SlewRateLimiter(0.75);
+    SlewRateLimiter filter = new SlewRateLimiter(3);
 
-    SlewRateLimiter filter2 = new SlewRateLimiter(0.5);
+    SlewRateLimiter filter2 = new SlewRateLimiter(3);
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -71,8 +71,11 @@ public class RobotContainer {
         configureBindings();
         //autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
 
-        NamedCommands.registerCommand("elevatorCoralL2", new InstantCommand(
+     NamedCommands.registerCommand("elevatorCoralL2", new InstantCommand(
         () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralL2)));//good
+
+     NamedCommands.registerCommand("elevatorHome", new InstantCommand(
+            () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorHomePosition)));
 
     NamedCommands.registerCommand("wristCoralL2", new InstantCommand(
         () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralL2)));//good
@@ -83,6 +86,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("intakeOpen", new InstantCommand(
         () -> m_intakeSubsystem.moveToPosition(Constants.Intake.intakeOpen)));//good
 
+    NamedCommands.registerCommand("intakeClose", new InstantCommand(
+        () -> m_intakeSubsystem.moveToPosition(Constants.Intake.intakeClose)));
 
         autoChooser = AutoBuilder.buildAutoChooser("Auto");
         SmartDashboard.putData("Auto Mode", autoChooser);
@@ -98,7 +103,7 @@ public class RobotContainer {
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
                 drive.withVelocityX(filter.calculate(-joystick.getLeftY()) * MaxSpeed) // Drive forward with negative Y (forward), slew code filter.calculate(-joystick.getLeftY())
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                    .withVelocityY(filter2.calculate(-joystick.getLeftX()) * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
