@@ -15,6 +15,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 
@@ -27,6 +28,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   TalonFX elevatorDrive2 = new TalonFX(Constants.Elevator.elevatorDrive2_ID, "rio");
 
   private final MotionMagicVoltage motionMagicControl = new MotionMagicVoltage(0);
+  //private final PositionVoltage positionControl = new PositionVoltage(0);
+
 
   public ElevatorSubsystem() {
     TalonFXConfiguration configEle1 = new TalonFXConfiguration();
@@ -38,8 +41,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     /* Configure Motion Magic */
     MotionMagicConfigs mmc = configEle1.MotionMagic;
-    mmc.withMotionMagicCruiseVelocity(RotationsPerSecond.of(75)) // 5 (mechanism) rotations per second cruise (max 100)
-      .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(35)) // Take approximately 0.5 seconds to reach max vel (max 100)
+    mmc.withMotionMagicCruiseVelocity(RotationsPerSecond.of(100)) // 5 (mechanism) rotations per second cruise (max 100)
+      .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(75)) // Take approximately 0.5 seconds to reach max vel (max 100)
       // Take approximately 0.1 seconds to reach max accel 
       .withMotionMagicJerk(1600);
 
@@ -50,6 +53,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     slot0.kP = 10; // A position error of 0.2 rotations results in 12 V output
     slot0.kI = 0; // No output for integrated error
     slot0.kD = 0.1; // A velocity error of 1 rps results in 0.5 V output
+
+    // position voltage 
+   // configEle1.Voltage.withPeakForwardVoltage(8).withPeakReverseVoltage(-8);
 
     // configure motors
    // configEle1.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;

@@ -198,7 +198,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     public void enableSlowSpeed(){
-        speedOffset = 5;
+        speedOffset = 3.5;
     }
 
     public void enableNormalSpeed(){

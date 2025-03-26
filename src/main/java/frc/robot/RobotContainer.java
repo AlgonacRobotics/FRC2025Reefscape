@@ -14,6 +14,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -102,9 +103,9 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(filter.calculate(-joystick.getLeftY()) * MaxSpeed) // Drive forward with negative Y (forward), slew code filter.calculate(-joystick.getLeftY())
-                    .withVelocityY(filter2.calculate(-joystick.getLeftX()) * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX((filter.calculate(-joystick.getLeftY()) * MaxSpeed)/drivetrain.speedOffset) // Drive forward with negative Y (forward), slew code filter.calculate(-joystick.getLeftY())
+                    .withVelocityY((filter2.calculate(-joystick.getLeftX()) * MaxSpeed)/drivetrain.speedOffset) // Drive left with negative X (left)
+                    .withRotationalRate((-joystick.getRightX() * MaxAngularRate)/drivetrain.speedOffset) // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -134,12 +135,20 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         // Make drive slow button
-        //.x().onTrue(new InstantCommand(
-          //  () -> drivetrain.enableSlowSpeed()));
+        joystick.rightBumper().onTrue(Commands.sequence(
+        new InstantCommand(
+            () -> joystick.setRumble(RumbleType.kRightRumble, 1)),   
+        new InstantCommand(
+            () -> drivetrain.enableSlowSpeed())
+            ));
 
         // Make drive normal button
-        //joystick.b().onTrue(new InstantCommand(
-          //  () -> drivetrain.enableNormalSpeed()));
+        joystick.rightBumper().onFalse(Commands.sequence(
+            new InstantCommand(
+                () -> drivetrain.enableNormalSpeed()),
+            new InstantCommand(
+                () -> joystick.setRumble(RumbleType.kRightRumble, 0))
+            ));
 
 
         //configure operatorStick button bindings
@@ -157,7 +166,7 @@ public class RobotContainer {
             ));
 
         //SCORE L1 move wrist to coral LM then move elevator to home position
-        m_operatorStick.a().onTrue(Commands.sequence(
+       /*  m_operatorStick.a().onTrue(Commands.sequence(
             new InstantCommand(
             () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristTravel)),
             new WaitCommand(1),
@@ -166,7 +175,7 @@ public class RobotContainer {
             new WaitCommand(2),
             new InstantCommand(
             () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralL2))
-            ));
+            ));*/
 
         //SCORE L2 move wrist to coral LM then move elevator to coral low
         m_operatorStick.x().onTrue(Commands.sequence(
@@ -180,26 +189,35 @@ public class RobotContainer {
             () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralL2))
             ));
 
-        //SCORE L4 move wrist to coral H then move elevator to coral high
-        /*m_operatorStick.y().onTrue(Commands.sequence(
+        // Put wrist into dealgefy position 
+        m_operatorStick.y().onTrue(Commands.sequence(
             new InstantCommand(
-            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCoralH))//,
+            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristTravel))//,
             //new InstantCommand(
             //() -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorCoralHigh))
-             ));*/
+             ));
 
         //COLLECTION POSITION move elevator home then move Wrist collect position 
         m_operatorStick.povDown().onTrue(Commands.sequence(
             new InstantCommand(
             () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristTravel)),
-            new WaitCommand(1),
+            new WaitCommand(0.5),
             new InstantCommand(
             () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorHomePosition)),
-            new WaitCommand(2),
+            new WaitCommand(1.5),
             new InstantCommand(
             () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristCollect)),
             new InstantCommand(
             () -> m_intakeSubsystem.moveToPosition(Constants.Intake.intakeClose))
+            ));
+
+            //CLIMB POSITION raise robot 
+        m_operatorStick.povUp().onTrue(Commands.sequence(
+            new InstantCommand(
+            () -> m_wristSubsystem.moveToPosition(Constants.Wrist.wristTravel)),
+            new WaitCommand(1),
+            new InstantCommand(
+            () -> m_elevatorSubsystem.moveToPosition(Constants.Elevator.elevatorHomePosition))
             ));
 
 
