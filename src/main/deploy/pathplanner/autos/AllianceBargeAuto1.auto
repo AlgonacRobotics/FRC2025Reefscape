@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "intakeClose"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "AllianceBargePath1"
@@ -25,7 +19,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.0
+            "waitTime": 3.0
           }
         },
         {
@@ -44,6 +38,12 @@
           "type": "named",
           "data": {
             "name": "wristCoralL2"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         },
         {
